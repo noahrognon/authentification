@@ -1,0 +1,42 @@
+---
+import "../styles/login.css";
+import "../styles/pages.css";
+---
+<html lang="fr" class="page-root">
+  <body class="page-body">
+    <main class="page-shell home-layout">
+      <header class="home-hero">
+        <h1 class="home-title">Accueil</h1>
+      </header>
+      <section class="page-card portal-card" aria-live="polite">
+        <div id="portal" class="portal-content" data-state="loading"></div>
+      </section>
+    </main>
+    <script type="module">
+      const { pb } = await import("/lib/pb.js");
+      const portal = document.getElementById("portal");
+
+      if (pb.authStore.isValid) {
+        portal.innerHTML = `
+          <p class="status-line"><strong>Connect? :</strong> ${pb.authStore.model.email}</p>
+          <div class="portal-actions">
+            <a href="/students" class="btn btn--primary">Voir les ?tudiants</a>
+            <button id="logout" class="btn btn--ghost">D?connexion</button>
+          </div>
+        `;
+        document.getElementById("logout").onclick = () => {
+          pb.authStore.clear();
+          location.reload();
+        };
+      } else {
+        portal.innerHTML = `
+          <div class="portal-links">
+            <a href="/login" class="link">Connexion</a>
+            <span aria-hidden="true">|</span>
+            <a href="/register" class="link">Inscription</a>
+          </div>
+        `;
+      }
+    </script>
+  </body>
+</html>

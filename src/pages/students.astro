@@ -1,0 +1,54 @@
+---
+import "../styles/login.css";
+import "../styles/pages.css";
+---
+<html lang="fr" class="page-root">
+  <body class="page-body">
+    <main class="page-shell students-layout">
+      <header class="students-header">
+        <div class="students-title-group">
+          <h1 class="students-title">Étudiants</h1>
+          <p id="current-user" class="status-line students-email" aria-live="polite"></p>
+        </div>
+        <div class="students-controls">
+          <button id="logout" class="btn btn--ghost">Déconnexion</button>
+        </div>
+      </header>
+      <section class="page-card student-card" aria-live="polite">
+        <ul id="list" class="student-list"></ul>
+      </section>
+    </main>
+    <script type="module">
+      const { pb } = await import("/lib/pb.js");
+
+      if (!pb.authStore.isValid) {
+        location.href = "/login";
+      } else {
+        const ul = document.getElementById("list");
+        const info = document.getElementById("current-user");
+        const students = await pb.collection("students").getFullList();
+        ul.innerHTML = students
+          .map(
+            (s) => `
+              <li class="student-item">
+                <div class="student-meta">
+                  <p class="student-name">${s.firstname} ${s.lastname}</p>
+                  <p class="student-email">(${s.email})</p>
+                </div>
+              </li>
+            `
+          )
+          .join("");
+
+        if (info) {
+          info.textContent = `Connect? : ${pb.authStore.model.email}`;
+        }
+
+        document.getElementById("logout").onclick = () => {
+          pb.authStore.clear();
+          location.href = "/";
+        };
+      }
+    </script>
+  </body>
+</html>

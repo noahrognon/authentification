@@ -1,0 +1,85 @@
+---
+import "../styles/login.css";
+---
+<html lang="fr" class="login-root">
+  <body class="login-body">
+    <div class="login-container">
+      <h1 id="register-title" class="login-heading">Inscription</h1>
+      <form
+        id="registerForm"
+        class="login-card"
+        aria-describedby="msg"
+        aria-labelledby="register-title"
+      >
+        <label class="form-field" for="register-email">
+          <span class="field-label">Email</span>
+          <input
+            id="register-email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            required
+            autocomplete="email"
+            class="input-field"
+          />
+        </label>
+        <label class="form-field" for="register-password">
+          <span class="field-label">Mot de passe</span>
+          <input
+            id="register-password"
+            name="password"
+            type="password"
+            placeholder="Mot de passe"
+            required
+            autocomplete="new-password"
+            class="input-field"
+          />
+        </label>
+        <label class="form-field" for="register-password-confirm">
+          <span class="field-label">Confirmez le mot de passe</span>
+          <input
+            id="register-password-confirm"
+            name="passwordConfirm"
+            type="password"
+            placeholder="Confirmez le mot de passe"
+            required
+            autocomplete="new-password"
+            class="input-field"
+          />
+        </label>
+        <button class="btn btn--primary" data-variant="primary">S'inscrire</button>
+      </form>
+      <p id="msg" class="login-message" role="status" aria-live="polite"></p>
+      <p class="signup-text">
+        Deja un compte ? <a href="/login" class="signup-link">Se connecter</a>
+      </p>
+    </div>
+    <script type="module">
+      const { pb } = await import("/lib/pb.js");
+
+      const form = document.getElementById("registerForm");
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        const email = form.email.value;
+        const password = form.password.value;
+        const passwordConfirm = form.passwordConfirm.value;
+        try {
+          // cr?ation utilisateur
+          await pb.collection("users").create({
+            email,
+            password,
+            passwordConfirm,
+          });
+          // envoi email de v?rification
+          await pb.collection("users").requestVerification(email);
+          document.getElementById("msg").textContent =
+            "Inscription r?ussie, v?rifiez vos emails";
+        } catch (err) {
+          document.getElementById("msg").textContent = "?%chec de l'inscription";
+          console.error(err);
+        }
+      };
+    </script>
+  </body>
+</html>
+
