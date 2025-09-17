@@ -149,16 +149,7 @@ import "../styles/login.css";
           console.error(err);
         }
       };
-      // Bouton "Se connecter avec Facebook"
-      document.getElementById("facebooklogin").onclick = async () => {
-        try {
-          await pb.collection("users").authWithOAuth2({ provider: "facebook" });
-          location.href = "/students";
-        } catch (err) {
-          // affiche un message d'erreur propre à l’UI existante
-          console.error(err);
-        }
-      };
+      
     </script>
   </body>
 </html>
